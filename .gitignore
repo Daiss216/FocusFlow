@@ -1,0 +1,35 @@
+# Python / Virtual Environment
+venv/
+.venv/
+pyvenv.cfg
+.Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# FastAPI/Uvicorn/Configs
+.env
+*.env
+.pytest_cache/
+htmlcov/
+.coverage
+
+#QNN SDK Dependencies
+qnn-sdk/
+*.dll
+*.so
+*.bin
+
+# AI Models & Cache
+*.onnx
+*.onnx.ort
+models/
+huggingface_cache/
+.cache/
+
+# OS & IDE Cleanups
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
