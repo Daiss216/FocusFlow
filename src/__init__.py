@@ -1,0 +1,1 @@
+## FocusFlow - offline transcription + summarization MVP.
