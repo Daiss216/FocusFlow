@@ -8,7 +8,7 @@ from .summarize import summarize, keywords
 
 
 def main():
-    p = argparse.ArgumentParser(description="LocalMind: offline notes MVP")
+    p = argparse.ArgumentParser(description="FocusFlow: offline notes")
     p.add_argument("--input", required=True,
                    help="Path to a WAV/MP3 file, or 'mic' to record")
     p.add_argument("--seconds", type=int, default=30,
