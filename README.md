@@ -38,7 +38,7 @@ FocusFlow is an AI meeting & study companion designed, developed, and optimized 
     ├── static/
     │   └── index.html          # Browser UI (record / upload / results)
     ├── scripts/
-    │   └── benchmark_npu.py    # CPU vs Snapdragon NPU benchmark
+    │   └── npu.py              # CPU vs Snapdragon NPU benchmark
     ├── src/                    # Core package
     │   ├── cli.py              # Command-line entry point
     │   ├── capture.py          # Microphone recording
