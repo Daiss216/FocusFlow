@@ -49,6 +49,9 @@ FocusFlow is an AI meeting & study companion designed, developed, and optimized 
 
 > The benchmark degrades gracefully: on non-Snapdragon machines it reports the CPU numbers and a clear "QNN EP not found" message instead of crashing — **the same script lights up the NPU on Snapdragon HP PCs with zero code changes.**
 
+## Snapshot
+<img width="85%" alt="focusflow" src="https://github.com/user-attachments/assets/e9440e7c-6c05-4c2b-b607-3566fddd194d" />
+
 ## Roadmap
 
 - [x] MVP: offline transcription + summarization (CLI + web UI)
