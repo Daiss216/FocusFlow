@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>FocusFlow - Offline AI Notes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <style>
       :root {
         --bg: #0f1115;
@@ -30,6 +31,7 @@
       .wrap {
         width: 100%;
         max-width: 720px;
+        flex: 1;
       }
       h1 {
         font-size: 1.4rem;
@@ -109,10 +111,35 @@
         font-size: 0.85rem;
         margin-top: 8px;
       }
+
+      footer { 
+        margin-top:32px; 
+        padding:20px 0 28px; 
+        border-top:1px solid #262a33;
+        color:#6b7280; 
+        font-size:.8rem; 
+        text-align:center; 
+      }
+
+      footer a { 
+        color:#6b7280; 
+        text-decoration:none; 
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
     </style>
     <base target="_blank" />
   </head>
-  <body>
+  <br>
+  <div>
     <div class="wrap">
       <h1>⏳ FocusFlow</h1>
       <div class="sub">
@@ -121,10 +148,12 @@
       </div>
 
       <div class="card">
-        <div class="row">
+        <br class="row">
           <button id="recBtn">🎙️ Record</button>
           <button id="stopBtn" class="ghost" disabled>⏹ Stop & Process</button>
+          </br>
           <span style="color: #6b7280; font-size: 0.85rem">or</span>
+          </br>
           <input type="file" id="fileInput" accept="audio/*" />
           <select id="model">
             <option value="tiny">tiny (fastest)</option>
@@ -134,7 +163,7 @@
         </div>
         <div id="status"></div>
       </div>
-
+      
       <div class="card" id="outCard" style="display: none">
         <h3>Transcript</h3>
         <pre id="transcript"></pre>
@@ -143,6 +172,11 @@
         <h3>Keywords</h3>
         <div id="keywords"></div>
       </div>
+
+      <footer>
+        © 2026 | built for Snapdragon-powered HP PCs |
+        <a href="https://github.com/Daiss216/FocusFlow">GitHub</a>
+      </footer>
     </div>
 
     <script>
