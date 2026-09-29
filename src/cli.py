@@ -47,8 +47,9 @@ def main():
     print("-" * 50)
     print(summarize(transcript))
 
+    kws = keywords(transcript)
     print()
-    print("KEYWORDS: " + ", ".join(keywords(transcript)))
+    print("KEYWORDS: " + ", ".join(kws))
     print()
 
     #saved to memory
