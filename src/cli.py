@@ -5,7 +5,7 @@ import tempfile
 from .capture import record_mic
 from .asr import transcribe
 from .summarize import summarize, keywords
-
+from .memory import save_session, list_sessions
 
 def main():
     p = argparse.ArgumentParser(description="FocusFlow: offline notes")
@@ -17,11 +17,22 @@ def main():
                    help="Whisper model: tiny/base/small (default tiny)")
     args = p.parse_args()
 
+#to BROWSE MEMORY from the terminal
+    if args.input.lower() == "history":
+        print("SAVED NOTES (focusflow.db)")
+        print("-" * 50)
+        for item in list_sessions():
+            print("#%s  %s  [%s]  %s" % (item["id"], item["date"],
+                                           item["source"], item["preview"]))
+        return
+    
     if args.input.lower() == "mic":
         audio = tempfile.NamedTemporaryFile(suffix=".wav", delete=False).name
         record_mic(args.seconds, audio)
+        source = "mic (%ds)" % args.seconds
     else:
         audio = args.input
+        source= args.input
 
     print("Transcribing on-device...")
     transcript = transcribe(audio, args.model)
@@ -39,4 +50,8 @@ def main():
     print()
     print("KEYWORDS: " + ", ".join(keywords(transcript)))
     print()
+
+    #saved to memory
+    save_session(source, transcript, summarize(transcript), kws)
+    print("Saved to memory (focusflow.db). View with: python -m focusflow --input history")
     print("Everything ran locally. Nothing was sent to the cloud.")

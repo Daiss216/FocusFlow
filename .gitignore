@@ -33,3 +33,4 @@ huggingface_cache/
 .idea/
 Thumbs.db
 .DS_Store
+focusflow.db
