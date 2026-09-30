@@ -10,11 +10,17 @@ FocusFlow is an AI meeting & study companion designed, developed, and optimized 
 ## Features
 
 - **Record or upload audio** — browser mic recording (Web UI) or local files (CLI)
+- Process audio locally for privacy-focused, offline-first note creation.
 - **On-device transcription** — Whisper via `faster-whisper` (int8, CPU; NPU-ready)
+- Choose between Tiny, Base, and Small transcription models based on speed and accuracy requirements.
 - **Instant summaries & keywords** — zero-LLM extractive summarizer, works offline out of the box
+- Save processed notes in local history.
+- Reopen previous notes to review transcripts, summaries, and keywords.
+- Display note metadata including source, date, ID, and preview text.
 - **Snapdragon NPU-ready** — the same code activates the 45 TOPS Hexagon NPU on Snapdragon X machines via ONNX Runtime + QNN
 - **Battery-friendly** — int8 quantized inference keeps CPU load (and fan noise) low
 - **Privacy by design** — no accounts, no telemetry, no network calls after first model download
+- Show live recording, processing, success, and error status messages.
 
 ## Quick Start (Windows)
     python -m venv .venv
@@ -28,6 +34,9 @@ FocusFlow is an AI meeting & study companion designed, developed, and optimized 
     # CLI version
     python -m src --input mic --seconds 30
     python -m src --input meeting.wav
+
+    python -m localmind --input history     # browse all saved notes in terminal<img width="958" height="506" alt="Screenshot 2026-09-30 233122" src="https://github.com/user-attachments/assets/cc3fbcab-f20c-4bb5-bbec-0d208f16b440" />
+
 
 > **First run** downloads the Whisper `tiny` model (~75 MB) from Hugging Face. Everything works offline after that.
 
@@ -50,13 +59,18 @@ FocusFlow is an AI meeting & study companion designed, developed, and optimized 
 > The benchmark degrades gracefully: on non-Snapdragon machines it reports the CPU numbers and a clear "QNN EP not found" message instead of crashing — **the same script lights up the NPU on Snapdragon HP PCs with zero code changes.**
 
 ## Snapshot
-<img width="85%" alt="focusflow" src="https://github.com/user-attachments/assets/e9440e7c-6c05-4c2b-b607-3566fddd194d" />
+<p float="left">
+<img width="48%" alt="Screenshot 2026-09-30 233122" src="https://github.com/user-attachments/assets/054af5fd-1b56-4033-ac74-24b8765f9054" />
+
+<img width="48%" alt="Screenshot 2026-09-30 233150" src="https://github.com/user-attachments/assets/0400e914-5de8-4413-a48a-b29538803fd3" />
+</p>
 
 ## Roadmap
 
 - [x] MVP: offline transcription + summarization (CLI + web UI)
 - [x] CPU vs NPU benchmark harness
 - [x] NPU-accelerated Whisper via ONNX Runtime + QNN (`onnxruntime-qnn`)
+- [x] Notes stored locally in focusflow.db (Searchable history on the device)
 - [ ] Battery-aware inference scheduling (batch when plugged in)
 - [ ] Chat-with-your-notes using a local SLM (Phi-3-mini)
 - [ ] WinUI 3 desktop app + MSIX packaging
