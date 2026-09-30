@@ -1,7 +1,0 @@
-{
-  "sample": "sample.wav",
-  "cpu": null,
-  "npu": {
-    "error": "QNN EP not found. Install onnxruntime-qnn + Qualcomm AI Hub model."
-  }
-}

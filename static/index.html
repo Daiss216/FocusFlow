@@ -2,243 +2,1107 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>FocusFlow - Offline AI Notes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="FocusFlow is a private, offline-first meeting transcription and note summarization app."
+    />
+
+    <title>FocusFlow — Private Offline Meeting Notes</title>
 
     <style>
       :root {
-        --bg: #0f1115;
-        --card: #1a1d24;
+        --bg: #0d1014;
+        --surface: #171b22;
+        --surface-2: #1d232c;
+        --surface-3: #11151b;
+        --border: #2b3441;
+        --border-strong: #3a4758;
+
+        --text: #f1f5f9;
+        --muted: #9aa6b5;
+        --muted-dark: #718096;
+
         --accent: #4ade80;
-        --text: #e5e7eb;
+        --accent-dark: #166534;
+        --accent-soft: #12321e;
+
+        --warning: #fbbf24;
+        --danger: #f87171;
+        --danger-dark: #dc2626;
+
+        --shadow:
+          0 18px 45px rgb(0 0 0 / 0.22), inset 0 1px rgb(255 255 255 / 0.025);
+
+        --radius-sm: 10px;
+        --radius-md: 14px;
+        --radius-lg: 18px;
       }
-      * {
+
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
-        margin: 0;
       }
-      body {
+
+      html {
+        min-width: 320px;
         background: var(--bg);
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background:
+          radial-gradient(
+            circle at 6% 0%,
+            rgb(74 222 128 / 0.08),
+            transparent 30rem
+          ),
+          radial-gradient(
+            circle at 96% 16%,
+            rgb(59 130 246 / 0.045),
+            transparent 24rem
+          ),
+          var(--bg);
         color: var(--text);
         font-family:
+          Inter,
+          ui-sans-serif,
           system-ui,
-          Segoe UI,
-          Roboto,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
           sans-serif;
-        display: flex;
-        justify-content: center;
-        padding: 32px 16px;
+        line-height: 1.5;
       }
-      .wrap {
-        width: 100%;
-        max-width: 720px;
-        flex: 1;
+
+      button,
+      input,
+      select {
+        font: inherit;
       }
-      h1 {
-        font-size: 1.4rem;
-        margin-bottom: 4px;
-      }
-      .sub {
-        color: #9ca3af;
-        font-size: 0.9rem;
-        margin-bottom: 20px;
-      }
-      .card {
-        background: var(--card);
-        border: 1px solid #262a33;
-        border-radius: 12px;
-        padding: 18px;
-        margin-bottom: 16px;
-      }
+
       button {
-        background: var(--accent);
-        color: #052e16;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 16px;
-        font-weight: 600;
+        border: 0;
+      }
+
+      button:not(:disabled) {
         cursor: pointer;
-        margin-right: 8px;
       }
-      button:disabled {
-        opacity: 0.4;
-        cursor: default;
+
+      button:focus-visible,
+      select:focus-visible,
+      .file-picker:has(input:focus-visible),
+      .note-item:focus-visible {
+        outline: 3px solid rgb(74 222 128 / 0.36);
+        outline-offset: 3px;
       }
-      button.ghost {
-        background: #262a33;
-        color: var(--text);
+
+      [hidden] {
+        display: none !important;
       }
-      select,
-      input[type="file"] {
-        background: #262a33;
-        color: var(--text);
-        border: 1px solid #333947;
-        border-radius: 8px;
-        padding: 8px;
-        margin: 6px 0;
+
+      .app-shell {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 42px 0 28px;
       }
-      .row {
+
+      /* Header */
+
+      .app-header {
         display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        align-items: center;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 32px;
       }
-      pre {
-        white-space: pre-wrap;
-        word-break: break-word;
-        font-size: 0.9rem;
-        background: #10131a;
-        padding: 12px;
-        border-radius: 8px;
+
+      .brand {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border: 1px solid #354153;
+        border-radius: 14px;
+        background: linear-gradient(145deg, #1c2922, #131a17);
+        box-shadow: inset 0 1px rgb(255 255 255 / 0.05);
+        font-size: 23px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(1.85rem, 4vw, 2.55rem);
+        font-weight: 800;
+        letter-spacing: -0.045em;
+        line-height: 1;
+      }
+
+      .sub {
+        max-width: 55ch;
         margin-top: 10px;
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.55;
       }
-      h3 {
-        font-size: 0.85rem;
+
+      .privacy-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 13px;
+        border: 1px solid #2d6c44;
+        border-radius: 999px;
+        background: rgb(22 101 52 / 0.16);
+        color: #a7f3c0;
+        font-size: 0.78rem;
+        font-weight: 750;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+      }
+
+      .privacy-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 4px rgb(74 222 128 / 0.12);
+      }
+
+      /* Layout */
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 24px;
+        align-items: start;
+      }
+
+      .main {
+        min-width: 0;
+      }
+
+      .sidebar {
+        min-width: 0;
+      }
+
+      /* Cards */
+
+      .card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(
+          145deg,
+          rgb(30 35 44 / 0.98),
+          rgb(21 25 32 / 0.98)
+        );
+        box-shadow: var(--shadow);
+      }
+
+      .recorder-card {
+        padding: 28px;
+      }
+
+      .output-card {
+        margin-top: 24px;
+        padding: 28px;
+      }
+
+      .history-card {
+        position: sticky;
+        top: 24px;
+        padding: 22px;
+      }
+
+      .section-heading {
+        margin-bottom: 26px;
+      }
+
+      .eyebrow {
         color: var(--accent);
-        margin-top: 14px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
       }
-      .pill {
-        display: inline-block;
-        background: #262a33;
-        border-radius: 99px;
-        padding: 4px 10px;
-        font-size: 0.8rem;
-        margin: 2px;
-      }
-      #status {
-        color: #fbbf24;
-        font-size: 0.85rem;
+
+      .section-heading h2 {
         margin-top: 8px;
+        font-size: 1.42rem;
+        letter-spacing: -0.025em;
       }
 
-      footer { 
-        margin-top:32px; 
-        padding:20px 0 28px; 
-        border-top:1px solid #262a33;
-        color:#6b7280; 
-        font-size:.8rem; 
-        text-align:center; 
+      .section-heading p {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.55;
       }
 
-      footer a { 
-        color:#6b7280; 
-        text-decoration:none; 
+      /* Buttons */
+
+      .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
-      .visually-hidden {
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border: 1px solid transparent;
+        border-radius: var(--radius-sm);
+        background: var(--accent);
+        color: #072813;
+        font-size: 0.92rem;
+        font-weight: 800;
+        transition:
+          transform 160ms ease,
+          background 160ms ease,
+          border-color 160ms ease,
+          opacity 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      button:not(:disabled):hover {
+        transform: translateY(-1px);
+        background: #5eea92;
+        box-shadow: 0 8px 18px rgb(74 222 128 / 0.15);
+      }
+
+      button:not(:disabled):active {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        opacity: 0.42;
+        cursor: not-allowed;
+      }
+
+      button.ghost {
+        border-color: #374151;
+        background: #252b35;
+        color: var(--text);
+      }
+
+      button.ghost:not(:disabled):hover {
+        border-color: #4b596b;
+        background: #303946;
+        box-shadow: none;
+      }
+
+      button.is-recording {
+        background: var(--danger-dark);
+        color: #fff;
+        animation: recording-pulse 1.7s ease-in-out infinite;
+      }
+
+      @keyframes recording-pulse {
+        50% {
+          box-shadow: 0 0 0 8px rgb(248 113 113 / 0.12);
+        }
+      }
+
+      /* Upload */
+
+      .divider-label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 24px 0 16px;
+        color: var(--muted-dark);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      .divider-label::before,
+      .divider-label::after {
+        width: 100%;
+        height: 1px;
+        background: var(--border);
+        content: "";
+      }
+
+      .file-picker {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-height: 76px;
+        padding: 14px 16px;
+        border: 1px dashed #4a5869;
+        border-radius: 12px;
+        background: #131820;
+        cursor: pointer;
+        transition:
+          border-color 160ms ease,
+          background 160ms ease,
+          transform 160ms ease;
+      }
+
+      .file-picker:hover {
+        border-color: var(--accent);
+        background: #16241b;
+      }
+
+      .file-picker:active {
+        transform: scale(0.995);
+      }
+
+      .file-picker input {
         position: absolute;
         width: 1px;
         height: 1px;
         overflow: hidden;
         clip: rect(0 0 0 0);
         white-space: nowrap;
+        opacity: 0;
       }
 
-    </style>
-    <base target="_blank" />
-  </head>
-  <br>
-  <div>
-    <div class="wrap">
-      <h1>⏳ FocusFlow</h1>
-      <div class="sub">
-        Private, offline meeting notes — everything runs on your PC. Nothing is
-        uploaded to the cloud.
-      </div>
+      .file-icon {
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        background: #223426;
+        color: var(--accent);
+        font-size: 1.35rem;
+      }
 
-      <div class="card">
-        <br class="row">
-          <button id="recBtn">🎙️ Record</button>
-          <button id="stopBtn" class="ghost" disabled>⏹ Stop & Process</button>
-          </br>
-          <span style="color: #6b7280; font-size: 0.85rem">or</span>
-          </br>
-          <input type="file" id="fileInput" accept="audio/*" />
-          <select id="model">
-            <option value="tiny">tiny (fastest)</option>
-            <option value="base">base</option>
-            <option value="small">small (most accurate)</option>
-          </select>
+      .file-picker-text {
+        min-width: 0;
+      }
+
+      .file-picker strong,
+      .file-picker small {
+        display: block;
+      }
+
+      .file-picker strong {
+        overflow: hidden;
+        color: var(--text);
+        font-size: 0.9rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .file-picker small {
+        margin-top: 4px;
+        color: var(--muted-dark);
+        font-size: 0.78rem;
+      }
+
+      /* Model field */
+
+      .field-label {
+        display: block;
+        margin: 22px 0 8px;
+        color: #d8e0e9;
+        font-size: 0.8rem;
+        font-weight: 750;
+      }
+
+      select {
+        width: min(100%, 330px);
+        min-height: 44px;
+        padding: 0 12px;
+        border: 1px solid #3a4554;
+        border-radius: var(--radius-sm);
+        outline: none;
+        background: #252b35;
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .field-help {
+        margin-top: 7px;
+        color: var(--muted-dark);
+        font-size: 0.78rem;
+      }
+
+      /* Status */
+
+      #status {
+        min-height: 24px;
+        margin-top: 20px;
+        color: var(--warning);
+        font-size: 0.85rem;
+        line-height: 1.45;
+      }
+
+      #status.success {
+        color: #86efac;
+      }
+
+      #status.error {
+        color: #fca5a5;
+      }
+
+      #status.processing {
+        color: #fde68a;
+      }
+
+      /* Output */
+
+      .output-section + .output-section {
+        margin-top: 28px;
+      }
+
+      .output-section h3 {
+        margin-bottom: 10px;
+        color: #a7f3c0;
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      pre {
+        min-height: 80px;
+        margin: 0;
+        overflow-x: auto;
+        padding: 16px;
+        border: 1px solid #2b3542;
+        border-radius: 12px;
+        background: #10151c;
+        color: #dbe5ef;
+        font-family: inherit;
+        font-size: 0.9rem;
+        line-height: 1.65;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      #keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        border: 1px solid #315b40;
+        border-radius: 999px;
+        background: #15291d;
+        color: #b5f5ce;
+        font-size: 0.78rem;
+        font-weight: 650;
+      }
+
+      /* History */
+
+      .history-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .history-header h2 {
+        margin-top: 6px;
+        font-size: 1.22rem;
+        letter-spacing: -0.02em;
+      }
+
+      .count-badge {
+        display: grid;
+        place-items: center;
+        min-width: 29px;
+        height: 29px;
+        padding: 0 8px;
+        border: 1px solid #315b40;
+        border-radius: 999px;
+        background: #16281c;
+        color: #a7f3c0;
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      #historyList {
+        max-height: calc(80vh - 102px);
+        overflow-y: auto;
+        padding-right: 3px;
+      }
+
+      .note-item {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 12px;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        outline: none;
+        background: #10151c;
+        color: inherit;
+        text-align: left;
+        transition:
+          border-color 160ms ease,
+          background 160ms ease,
+          transform 160ms ease;
+      }
+
+      .note-item:hover {
+        border-color: #3a7650;
+        background: #152018;
+        transform: translateY(-1px);
+      }
+
+      .note-item .t {
+        color: var(--muted-dark);
+        font-size: 0.72rem;
+      }
+
+      .note-item .p {
+        display: -webkit-box;
+        overflow: hidden;
+        margin-top: 5px;
+        color: #d7e0ea;
+        font-size: 0.84rem;
+        line-height: 1.45;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .empty-history {
+        padding: 24px 14px;
+        border: 1px dashed #374151;
+        border-radius: 12px;
+        text-align: center;
+      }
+
+      .empty-icon {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--accent);
+        font-size: 1.45rem;
+      }
+
+      .empty-history strong {
+        display: block;
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+
+      .empty-history p {
+        margin-top: 6px;
+        color: var(--muted-dark);
+        font-size: 0.8rem;
+        line-height: 1.5;
+      }
+
+      /* Footer */
+
+      footer {
+        margin-top: 36px;
+        padding: 22px 0 4px;
+        border-top: 1px solid var(--border);
+        color: var(--muted-dark);
+        font-size: 0.82rem;
+        text-align: center;
+      }
+
+      footer a {
+        color: #a7f3c0;
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      /* Responsive */
+
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .history-card {
+          position: static;
+        }
+
+        #historyList {
+          max-height: 350px;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .app-shell {
+          width: min(100% - 28px, 1180px);
+          padding-top: 24px;
+        }
+
+        .app-header {
+          flex-direction: column;
+          gap: 18px;
+          margin-bottom: 24px;
+        }
+
+        .privacy-badge {
+          align-self: flex-start;
+        }
+
+        .recorder-card,
+        .output-card,
+        .history-card {
+          padding: 18px;
+          border-radius: 15px;
+        }
+
+        .action-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .action-row button {
+          width: 100%;
+        }
+
+        .file-picker {
+          align-items: flex-start;
+        }
+
+        select {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">⌛</div>
+
+          <div>
+            <h1>FocusFlow</h1>
+            <p class="sub">
+              Private, offline meeting notes. Record or upload audio, then get a
+              local transcript, summary, and key discussion points.
+            </p>
+          </div>
         </div>
-        <div id="status"></div>
-      </div>
-      
-      <div class="card" id="outCard" style="display: none">
-        <h3>Transcript</h3>
-        <pre id="transcript"></pre>
-        <h3>Summary</h3>
-        <pre id="summary"></pre>
-        <h3>Keywords</h3>
-        <div id="keywords"></div>
+
+        <div class="privacy-badge">
+          <span class="privacy-dot" aria-hidden="true"></span>
+          Offline-first processing
+        </div>
+      </header>
+
+      <div class="layout">
+        <section class="main" aria-label="Create a meeting note">
+          <div class="card recorder-card">
+            <div class="section-heading">
+              <span class="eyebrow">Capture</span>
+              <h2>Create a new note</h2>
+              <p>
+                Record a conversation live or upload an existing audio file to
+                process it locally on your device.
+              </p>
+            </div>
+
+            <div class="action-row">
+              <button id="recBtn" type="button">
+                🎙️ <span>Record meeting</span>
+              </button>
+
+              <button id="stopBtn" class="ghost" type="button" disabled>
+                ⏹ <span>Stop &amp; process</span>
+              </button>
+            </div>
+
+            <div class="divider-label">or upload audio</div>
+
+            <label class="file-picker" for="fileInput">
+              <span class="file-icon" aria-hidden="true">↥</span>
+
+              <span class="file-picker-text">
+                <strong id="fileName">Choose an audio file</strong>
+                <small>MP3, WAV, M4A, OGG, or WebM</small>
+              </span>
+
+              <input type="file" id="fileInput" accept="audio/*" />
+            </label>
+
+            <label class="field-label" for="model"> Transcription model </label>
+
+            <select id="model">
+              <option value="tiny">Tiny · fastest</option>
+              <option value="base">Base · balanced</option>
+              <option value="small">Small · most accurate</option>
+            </select>
+
+            <p class="field-help">
+              Smaller models are faster. Larger models may improve transcript
+              accuracy.
+            </p>
+
+            <div id="status" role="status" aria-live="polite"></div>
+          </div>
+
+          <section class="card output-card" id="outCard" hidden>
+            <div class="output-section">
+              <h3>Transcript</h3>
+              <pre id="transcript"></pre>
+            </div>
+
+            <div class="output-section">
+              <h3>Summary</h3>
+              <pre id="summary"></pre>
+            </div>
+
+            <div class="output-section">
+              <h3>Keywords</h3>
+              <div id="keywords"></div>
+            </div>
+          </section>
+        </section>
+
+        <aside class="sidebar" aria-label="Saved meeting notes">
+          <section class="card history-card">
+            <div class="history-header">
+              <div>
+                <span class="eyebrow">Library</span>
+                <h2>History</h2>
+              </div>
+
+              <span id="historyCount" class="count-badge">0</span>
+            </div>
+
+            <div id="historyList">
+              <div class="empty-history">
+                <span class="empty-icon" aria-hidden="true">✦</span>
+                <strong>No notes yet</strong>
+                <p>Your locally processed meetings will appear here.</p>
+              </div>
+            </div>
+          </section>
+        </aside>
       </div>
 
       <footer>
-        © 2026 | built for Snapdragon-powered HP PCs |
-        <a href="https://github.com/Daiss216/FocusFlow">GitHub</a>
+        © 2026 · Built for Snapdragon-powered HP PCs ·
+        <a
+          href="https://github.com/Daiss216/FocusFlow"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub
+        </a>
       </footer>
-    </div>
+    </main>
 
     <script>
       const recBtn = document.getElementById("recBtn");
       const stopBtn = document.getElementById("stopBtn");
       const statusEl = document.getElementById("status");
-      let recorder,
-        chunks = [];
+      const fileInput = document.getElementById("fileInput");
+      const fileName = document.getElementById("fileName");
+      const modelSelect = document.getElementById("model");
+      const outCard = document.getElementById("outCard");
+      const historyList = document.getElementById("historyList");
+      const historyCount = document.getElementById("historyCount");
 
-      recBtn.onclick = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
+      let recorder = null;
+      let chunks = [];
+
+      function setStatus(message = "", type = "") {
+        statusEl.textContent = message;
+        statusEl.className = type;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function renderKeywords(keywords) {
+        const container = document.getElementById("keywords");
+        container.replaceChildren();
+
+        const values = Array.isArray(keywords)
+          ? keywords
+          : String(keywords || "")
+              .split(",")
+              .map((item) => item.trim())
+              .filter(Boolean);
+
+        if (!values.length) {
+          const emptyPill = document.createElement("span");
+          emptyPill.className = "pill";
+          emptyPill.textContent = "No keywords extracted";
+          container.appendChild(emptyPill);
+          return;
+        }
+
+        values.forEach((keyword) => {
+          const pill = document.createElement("span");
+          pill.className = "pill";
+          pill.textContent = String(keyword).trim();
+          container.appendChild(pill);
         });
-        recorder = new MediaRecorder(stream);
-        chunks = [];
-        recorder.ondataavailable = (e) => chunks.push(e.data);
-        recorder.onstop = () =>
-          process(
-            new Blob(chunks, { type: recorder.mimeType }),
-            "recording.webm",
-          );
-        recorder.start();
-        recBtn.disabled = true;
-        stopBtn.disabled = false;
-        statusEl.textContent =
-          "🔴 Recording... speak, then press Stop & Process.";
-      };
+      }
 
-      stopBtn.onclick = () => {
-        recorder.stop();
-        recBtn.disabled = false;
-        stopBtn.disabled = true;
-        recorder.stream.getTracks().forEach((t) => t.stop());
-      };
+      function showNote(data) {
+        outCard.hidden = false;
 
-      document.getElementById("fileInput").onchange = (e) => {
-        if (e.target.files[0])
-          process(e.target.files[0], e.target.files[0].name);
-      };
+        document.getElementById("transcript").textContent =
+          data.transcript || "(No speech was detected.)";
 
-      async function process(blob, filename) {
-        statusEl.textContent =
-          "Transcribing on-device... (first run downloads the model)";
-        const fd = new FormData();
-        fd.append("file", blob, filename);
-        fd.append("model", document.getElementById("model").value);
+        document.getElementById("summary").textContent =
+          data.summary || "No summary is available.";
+
+        renderKeywords(data.keywords);
+      }
+
+      recBtn.addEventListener("click", async () => {
         try {
-          const res = await fetch("/api/process", { method: "POST", body: fd });
-          if (!res.ok) throw new Error(await res.text());
-          const data = await res.json();
-          document.getElementById("outCard").style.display = "block";
-          document.getElementById("transcript").textContent =
-            data.transcript || "(nothing heard)";
-          document.getElementById("summary").textContent = data.summary || "-";
-          document.getElementById("keywords").innerHTML = (data.keywords || [])
-            .map((k) => `<span class="pill">${k}</span>`)
-            .join("");
-          statusEl.textContent = "✅ Done — processed 100% locally.";
-        } catch (err) {
-          statusEl.textContent = "❌ Error: " + err.message;
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+
+          recorder = new MediaRecorder(stream);
+          chunks = [];
+
+          recorder.addEventListener("dataavailable", (event) => {
+            if (event.data.size > 0) {
+              chunks.push(event.data);
+            }
+          });
+
+          recorder.addEventListener("stop", () => {
+            const audioBlob = new Blob(chunks, {
+              type: recorder.mimeType || "audio/webm",
+            });
+
+            processAudio(audioBlob, "recording.webm");
+          });
+
+          recorder.start();
+
+          recBtn.disabled = true;
+          recBtn.classList.add("is-recording");
+          stopBtn.disabled = false;
+
+          setStatus(
+            "Recording in progress. Speak normally, then select Stop & Process.",
+            "processing",
+          );
+        } catch (error) {
+          setStatus(
+            "Microphone access was denied or is unavailable. Please allow microphone permission and try again.",
+            "error",
+          );
+        }
+      });
+
+      stopBtn.addEventListener("click", () => {
+        if (!recorder || recorder.state === "inactive") {
+          return;
+        }
+
+        recorder.stop();
+        recorder.stream.getTracks().forEach((track) => track.stop());
+
+        recBtn.disabled = false;
+        recBtn.classList.remove("is-recording");
+        stopBtn.disabled = true;
+
+        setStatus(
+          "Preparing your recording for local transcription...",
+          "processing",
+        );
+      });
+
+      fileInput.addEventListener("change", (event) => {
+        const selectedFile = event.target.files[0];
+
+        if (!selectedFile) {
+          fileName.textContent = "Choose an audio file";
+          return;
+        }
+
+        fileName.textContent = selectedFile.name;
+
+        setStatus(
+          `Selected ${selectedFile.name}. Starting local transcription...`,
+          "processing",
+        );
+
+        processAudio(selectedFile, selectedFile.name);
+      });
+
+      async function processAudio(blob, filename) {
+        setStatus(
+          "Transcribing on-device. The first use may download the selected model.",
+          "processing",
+        );
+
+        const formData = new FormData();
+        formData.append("file", blob, filename);
+        formData.append("model", modelSelect.value);
+
+        try {
+          const response = await fetch("/api/process", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(await response.text());
+          }
+
+          const result = await response.json();
+
+          showNote(result);
+
+          setStatus(
+            "Done — processed locally and saved to your FocusFlow history.",
+            "success",
+          );
+
+          await loadHistory();
+
+          outCard.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        } catch (error) {
+          setStatus(
+            `Processing failed: ${error.message || "Please try again."}`,
+            "error",
+          );
         }
       }
+
+      function renderEmptyHistory(
+        message = "Your locally processed meetings will appear here.",
+      ) {
+        historyCount.textContent = "0";
+
+        historyList.innerHTML = `
+          <div class="empty-history">
+            <span class="empty-icon" aria-hidden="true">✦</span>
+            <strong>No notes yet</strong>
+            <p>${escapeHtml(message)}</p>
+          </div>
+        `;
+      }
+
+      async function loadHistory() {
+        try {
+          const response = await fetch("/api/history");
+
+          if (!response.ok) {
+            throw new Error("Unable to load saved notes.");
+          }
+
+          const data = await response.json();
+          const sessions = data.sessions || [];
+
+          historyCount.textContent = String(sessions.length);
+
+          if (!sessions.length) {
+            renderEmptyHistory();
+            return;
+          }
+
+          historyList.innerHTML = sessions
+            .map((session) => {
+              const preview = escapeHtml(session.preview || "Untitled note");
+              const date = escapeHtml(session.date || "Unknown date");
+              const source = escapeHtml(session.source || "audio");
+
+              return `
+                <button
+                  class="note-item"
+                  type="button"
+                  data-note-id="${Number(session.id)}"
+                  aria-label="Open note ${Number(session.id)}"
+                >
+                  <div class="t">
+                    #${Number(session.id)} · ${date} · ${source}
+                  </div>
+                  <div class="p">${preview}</div>
+                </button>
+              `;
+            })
+            .join("");
+
+          document.querySelectorAll("[data-note-id]").forEach((button) => {
+            button.addEventListener("click", () => {
+              openNote(button.dataset.noteId);
+            });
+          });
+        } catch (error) {
+          historyCount.textContent = "!";
+          historyList.innerHTML = `
+            <div class="empty-history">
+              <span class="empty-icon" aria-hidden="true">!</span>
+              <strong>History unavailable</strong>
+              <p>Saved notes could not be loaded right now.</p>
+            </div>
+          `;
+        }
+      }
+
+      async function openNote(id) {
+        setStatus(`Loading note #${id} from local history...`, "processing");
+
+        try {
+          const response = await fetch(`/api/history/${id}`);
+
+          if (!response.ok) {
+            throw new Error("Unable to open this note.");
+          }
+
+          const data = await response.json();
+
+          showNote({
+            transcript: data.transcript,
+            summary: data.summary,
+            keywords: data.keywords,
+          });
+
+          setStatus(`Showing note #${id} from local history.`, "success");
+
+          outCard.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        } catch (error) {
+          setStatus(`Could not open note #${id}: ${error.message}`, "error");
+        }
+      }
+
+      loadHistory();
     </script>
   </body>
 </html>
