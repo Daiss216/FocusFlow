@@ -35,8 +35,7 @@ FocusFlow is an AI meeting & study companion designed, developed, and optimized 
     python -m src --input mic --seconds 30
     python -m src --input meeting.wav
 
-    python -m localmind --input history     # browse all saved notes in terminal<img width="958" height="506" alt="Screenshot 2026-09-30 233122" src="https://github.com/user-attachments/assets/cc3fbcab-f20c-4bb5-bbec-0d208f16b440" />
-
+    python -m focusflow --input history     # browse all saved notes in terminal
 
 > **First run** downloads the Whisper `tiny` model (~75 MB) from Hugging Face. Everything works offline after that.
 
@@ -60,9 +59,9 @@ FocusFlow is an AI meeting & study companion designed, developed, and optimized 
 
 ## Snapshot
 <p float="left">
-<img width="48%" alt="Screenshot 2026-09-30 233122" src="https://github.com/user-attachments/assets/054af5fd-1b56-4033-ac74-24b8765f9054" />
+<img width="50%" alt="Screenshot 2026-09-30 233122" src="https://github.com/user-attachments/assets/054af5fd-1b56-4033-ac74-24b8765f9054" />
 
-<img width="48%" alt="Screenshot 2026-09-30 233150" src="https://github.com/user-attachments/assets/0400e914-5de8-4413-a48a-b29538803fd3" />
+<img width="49%" alt="Screenshot 2026-09-30 233150" src="https://github.com/user-attachments/assets/0400e914-5de8-4413-a48a-b29538803fd3" />
 </p>
 
 ## Roadmap
